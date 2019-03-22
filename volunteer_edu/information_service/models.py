@@ -8,7 +8,7 @@ class Volunteer(models.Model):
     phone_number = models.CharField(max_length=12)  # 手机号
     password = models.CharField(max_length=16)  # 密码
     name = models.CharField(max_length=16)  # 姓名
-    gender = models.BooleanField()  # 性别
+    gender = models.CharField(max_length=2)  # 性别
     wechat = models.CharField(max_length=32)  # 微信号
     hometown = models.CharField(max_length=16)  # 籍贯
     school = models.CharField(max_length=32)  # 学校
@@ -16,10 +16,11 @@ class Volunteer(models.Model):
     identify = models.CharField(max_length=4)  # 目前身份（大学几年级）
     address = models.CharField(max_length=32)  # 地址
     image = models.FilePathField()  # 头像
-    title = models.CharField(max_length=32)  # 荣誉称号
+    title = models.CharField(max_length=100)  # 荣誉称号
 
-    edu_subjects = models.ManyToManyField('Subject')  # 教授科目
-    edu_area = models.ManyToManyField('Area')  # 可教授区域
+    subjects = models.ManyToManyField('Subject')  # 教授科目
+    areas = models.ManyToManyField('Area')  # 可教授区域
+
     edu_historys = models.ForeignKey('Edu_history', on_delete=models.CASCADE)  # 志愿记录
     edu_comments = models.ForeignKey('Edu_comment', on_delete=models.CASCADE)  # 所获志愿评价
 

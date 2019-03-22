@@ -1,0 +1,93 @@
+views：
+    URL分配：
+        # 笔记1.1：URL配置，添加view路径
+        # 每个模式都要求URL以斜杠结尾
+        # path('***/***/***/',views.function)
+        # 注意,<类型：变量名>可以从URL中捕获该类型的变量，并传入views中的函数
+
+        # 笔记1.2：URL分发,将url分配任务交给项目指定下属app去继续分配
+        # path('app名/',include('app.urls')
+
+    view模块
+        # 笔记2.1：view函数处理逻辑，返回渲染后的html文件
+        # render(request,"html模板",
+        #       {html文件变量字典}或locals()直接读取局部变量填入模板)
+
+        # 笔记2.2：对form表单的提交注意区别get和post形式
+
+        # 笔记2.3：redirect(URL)--跳转到对应的URL页面
+
+    # cookie设置
+        # cookie服务端发送设置
+        # renserObj.set_cookie(键值对)
+
+        # cookie接收
+        # req.COOKIES.get(键）
+    # session设置 -- 更高级、更安全的cookie
+        # session服务端发送设置
+        # req.session['key'] = value
+
+        # session服务端接收
+        # req.session.get('key')
+
+    #表单系统
+        #class **Form(forms.Form):
+            *** = ***Field(标签属性)
+        #其中***Field决定标签类型(eg.CharField,IntegarField,FileField)
+        #标签属性决定标签功能:
+        #   eg.
+        #   require -- 是否非空
+        #   max_length(min_length) -- 最大(最小)长度
+        #   widget -- 部件功能(如：forms.PasswordInput)
+        #   error_messages -- 非法表单错误信息字典
+        #       ={'表单约束'：错误提示 , ...}
+
+        # 功能：验证表单,自动生成html表单,自动生成html表单错误
+        # 1--验证表单
+        #   接收客户端表单: form = ***Form(req.POST)
+        #   验证表单合法性: form.is_vaild()
+        #
+        # 2--自动生成html表单
+        #   返回***Form空对象，由模板渲染: render(req.'*.html',{'form':***Form()})
+        #   '*.html': {{form.标签名}}
+        #
+        # 3--自动生成html表单错误
+        #   返回***Form对象，由模板渲染: render(req.'*.html',{'form':formObj})
+        #   '*.html': {{form.标签名.errors(可选:.序号)}}
+
+
+templates:
+    #变量从上下文输出一个值，这是一个类似于dict的对象，它将键映射到值。
+    #html中添加：{{var}}  var代表变量
+
+    #字典查找，属性查找和列表索引查找使用点表示法实现
+    #var.element
+
+models:
+    # 将创建的模型导入数据库
+    # 1--python manage.py makemigrations
+    # 2--python manage.py migrate
+
+    # 创建model
+    # 1--继承自models.Model
+    # 2--基本数据类型属性 = models.类型Field(length)
+    # 3--外键属性 = models.ForeignKey(外键对应model名,on_delete = models.CASCADE)
+    #
+    # 对数据库的增删改查（在views中实现逻辑）
+    # 1--增：类名.objects.create(字段=字段值, ...)
+    # 2--查：类名.objects.fliter(字段=字段值, ...) -- 返回一个查询集合
+    # 3--删：查询集合.delete()
+    # 4--改：查询集合.update(字段=字段值, ...)
+    # 5--外键查询：查询对象.外键名 -- 返回一个外键对象
+    #            查询对象.外键名__外键字段名 -- 返回外键字段
+    # 6--多对多操作
+    #   增：操作对象.多对多外键.add(连接对象)
+    #   删：操作对象.多对多外键.remove(连接对象)
+    #   改：操作对象.多对多外键.set(连接对象)
+    #   查：操作对象.多对多外键.all()
+    # 7--聚合查询(Max,Min,Avg,Count)
+    #   字段聚合值 = 查询集合.aggregate(聚合函数("字段名"))
+    #   字段分组聚合集合 = 查询集合.annotate(聚合函数("字段名"))
+    # 8--F,Q查询
+    #   F("字段名") == 该字段的值
+    #   Q("字段名") 可用&|`的关系来连接，并作为查询条件

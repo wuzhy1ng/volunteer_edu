@@ -22,9 +22,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'l6qmnm)4)41#g-h)gkx(728batn5(l@s5^3hol675o&-k+y0v&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['47.105.150.105']
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -53,7 +53,7 @@ ROOT_URLCONF = 'volunteer_edu.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,8 +76,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'volunteer_edu',
-        'USER': 'root',
-        'PASSWORD': 'qwe123',
+        'USER': 'wzy',
+        'PASSWORD': '12345',
         'HOST': '',
         'POST': '',
     }
