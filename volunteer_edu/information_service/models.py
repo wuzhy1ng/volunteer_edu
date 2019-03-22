@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 # Create your models here.
@@ -21,36 +22,35 @@ class Volunteer(models.Model):
     subjects = models.ManyToManyField('Subject')  # 教授科目
     areas = models.ManyToManyField('Area')  # 可教授区域
 
-    edu_historys = models.ForeignKey('Edu_history', on_delete=models.CASCADE)  # 志愿记录
-    edu_comments = models.ForeignKey('Edu_comment', on_delete=models.CASCADE)  # 所获志愿评价
-
 
 class Student(models.Model):
-    address = models.CharField(max_length=100)
-    grade = models.CharField(max_length=10)
-    gender = models.BooleanField()
-    name = models.CharField(max_length=32)
-    image = models.FilePathField()
-    phone_number = models.CharField(max_length=12)
-    wechat = models.CharField(max_length=32)
-    edu_historys = models.ForeignKey('Edu_history', on_delete=models.CASCADE)
+    phone_number = models.CharField(max_length=12)  # 手机号
+    password = models.CharField(max_length=16)  # 密码
+    name = models.CharField(max_length=16)  # 姓名
+    grade = models.CharField(max_length=10)  # 年级
+    address = models.CharField(max_length=100)  # 地址
+    image = models.FilePathField()  # 头像
+    wechat = models.CharField(max_length=32)  # 微信
 
 
 class Subject(models.Model):
     name = models.CharField(max_length=10)
 
 
-class Edu_history(models.Model):
-    volunteer_name = models.CharField(max_length=32)
-    student_name = models.CharField(max_length=32)
+class History(models.Model):
     subject = models.CharField(max_length=10)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.DateTimeField(default=timezone.now())
+    end_time = models.DateTimeField(default=timezone.now())
+
+    volunteer = models.ForeignKey('Volunteer', on_delete=models.CASCADE, default=1)
+    student = models.ForeignKey('Student', on_delete=models.CASCADE, default=1)
 
 
-class Edu_comment(models.Model):
+class Comment(models.Model):
     text = models.CharField(max_length=100)
+
+    volunteer = models.ForeignKey('Volunteer', on_delete=models.CASCADE, default=1)
+
 
 class Area(models.Model):
     name = models.CharField(max_length=8)
-

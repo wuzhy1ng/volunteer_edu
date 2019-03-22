@@ -1,106 +1,57 @@
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponse
 from django.http import JsonResponse
-
-from information_service import models
-from information_service.forms import *
 
 from logic import users
 from logic.expections import *
+from logic.utils import *
+
+import json
 
 
 # Create your views here.
 
 def register(request):
     if request.method == 'GET':
-        return render(request, 'register.html', {'form': RegisterForm()})
+        return HttpResponse('ok')
     elif request.method == 'POST':
-        json_data = request.POST['json']
-        form = json.loads(json_data)
+        form = getForm(request.POST)
 
         try:
             User = getattr(users, form['role'])
-            User(form,request.FILES['file']).register()
+            User(form).register()
+            return HttpResponse(json.dumps('Ok'), status=200)
         except UserExistedException:
-            return JsonResponse('UserExisted')
-
-        # raw_form = json.loads(json_data)
-        #
-        # form = RegisterForm(raw_form, request.FILES)
-        # edu_subjects = raw_form['edu_subjects']
-        # edu_areas = raw_form['edu_areas']
-        #
-        # # 若信息合法
-        # if form.is_vaild() and edu_subjects and edu_areas:
-        #
-        #     # 查重
-        #     if models.Volunteer.objects.filter(phone_number=form.phone_number).count() == 0:
-        #         return HttpResponse(json.dumps('volunteer exited'))
-        #
-        #     # 用户信息写入数据库
-        #     volunteer = models.Volunteer(is_vaild=form.is_vaild,
-        #                                  phone_number=form.phone_number,
-        #                                  password=form.password,
-        #                                  name=form.name,
-        #                                  gender=form.gender,
-        #                                  wechat=form.wechat,
-        #                                  hometown=form.hometown,
-        #                                  school=form.school,
-        #                                  majority=form.majority,
-        #                                  identify=form.identify,
-        #                                  address=form.address,
-        #                                  title=form.title
-        #                                  )
-        #     # 将外键关系加入用户信息
-        #     for each in edu_subjects:
-        #         subject = models.Subject.objects.get(name=each)
-        #         volunteer.edu_subjects.add(subject)
-        #     for each in edu_areas:
-        #         area = models.Subject.objects.get(name=each)
-        #         volunteer.edu_areas.add(area)
-        #
-        #     # 头像保存
-        #     image_format = request.FILES['file'].split('.')[1]
-        #     path = IMG_PATH + volunteer.name + image_format
-        #     with open(path, 'wb') as f:
-        #         for line in request.FILES['file'].chunks():
-        #             f.write(line)
-        #     volunteer.image = path
-        #
-        #     volunteer.save()
-
-        # 若信息非法
-        else:
-            return HttpResponse(json.dumps('false form'))
+            return HttpResponse(json.dumps('UserExisted'), status=403)
 
 
 def login(request):
     if request.method == 'GET':
         return HttpResponse('ok')
     elif request.method == 'POST':
+        form = getForm(request.POST)
 
+        try:
+            User = getattr(users, form['role'])
+            user = User(form).login()
+            return HttpResponse(json.dumps({'user': user}), status=200)
 
+        except UserNotFountExpection:
+            return HttpResponse(json.dumps('UserNotFount', status=403))
 
-        json_data = request.POST['json']
-        message = json.loads(json_data)
-        phone_number = message['phone_number']
-        password = message['password']
-        identity = message['identity']
+        except UserUnavailableExpection:
+            return HttpResponse(json.dumps('UserUnavailable', status=403))
 
-        User = getattr(models, 'identity')
-        # 检查是否存在该用户
-        if User.objects.filter(phone_number=phone_number).count() == 0:
-            return HttpResponse(json.dumps('user is not exited'))
-
-        user = User.objects.get(phone_number=phone_number)
-        # 检查密码是否符合
-        if user.password != password:
-            return HttpResponse(json.dumps('password error'))
-
-        return HttpResponse(json.dumps(user))
+        except PasswordErrorExpection:
+            return HttpResponse(json.dumps('PasswordError', status=403))
 
 
 def home(request):
     if request.method == 'GET':
         return HttpResponse('ok')
     elif request.method == 'POST':
+        json_data = request.POST['json']
+        form = json.dumps(json_data)
 
+        User = getattr(users, form['role'])
+        user_home = User(form).home()
+        return HttpResponse(json.dumps(user_home), status=200)
