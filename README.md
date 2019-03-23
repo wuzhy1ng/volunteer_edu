@@ -6,20 +6,20 @@ app与路由分配关系：
 app：information_service
 路由：
 
-    path('register/', views.register),  # 注册信息
-    path('register/sms/', views.register_sms),  # 注册验证码
-    path('register/safe/', views.register_safe),  # 注册安全模块（暂无）
+    index/register/  #注册
+    index/register/sms/ #注册验证码
+    index/register/safe/    #注册安全防护
 
-    path('login/', views.login),  # 登录
-    path('logout/', views.logout),  # 登出
+    index/login/  # 登录
+    index/logout/  # 登出
 
-    path('home/', views.home),  # 个人中心
+    index/home/  # 个人中心
 
-    path('update/message/', views.update_message),  # 更新信息
-    path('update/image/', views.update_image),  # 更新头像
-    path('update/certification/', views.update_certification),  # 更新证书
+    index/update/message/  # 更新信息
+    index/update/image/  # 更新头像
+    index/update/certification/  # 更新证书
 
-    path('test/', views.test),  # 测试
+    index/test/  # 测试
    
 app：reservation_service
 路由：暂无
