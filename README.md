@@ -5,6 +5,7 @@ app与路由分配关系：
 
 app：information_service
 路由：
+
     path('register/', views.register),  # 注册信息
     path('register/sms/', views.register_sms),  # 注册验证码
     path('register/safe/', views.register_safe),  # 注册安全模块（暂无）
