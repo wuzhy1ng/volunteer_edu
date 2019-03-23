@@ -5,10 +5,6 @@ app与路由分配关系：
 
 app：information_service
 路由：
-    index/register/  # 注册信息
-    index/register/sms/# 注册验证码
-    index/register/safe/# 注册安全模块（暂无）
-
     index/login/ # 登录
     index/logout/# 登出
 
