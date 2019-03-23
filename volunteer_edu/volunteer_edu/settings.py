@@ -25,6 +25,7 @@ SECRET_KEY = 'l6qmnm)4)41#g-h)gkx(728batn5(l@s5^3hol675o&-k+y0v&'
 DEBUG = True
 
 ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -76,10 +77,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'volunteer_edu',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': '',
-        'POST': '',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'POST': '3306',
     }
 }
 
@@ -116,5 +117,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
-
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]

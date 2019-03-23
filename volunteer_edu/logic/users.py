@@ -1,15 +1,15 @@
+from django.core import serializers
+
 from information_service import models
 from logic.expections import *
-from logic.GLOBALVAR import *
 
-import json
+import base64
 
 
 class Volunteer:
 
-    def __init__(self, form, file=None):
+    def __init__(self, form):
         self.form = form
-        self.file = file
 
     def register(self):
         """
@@ -46,17 +46,6 @@ class Volunteer:
             area = models.Area.objects.get(name=each)
             volunteer.areas.add(area)
 
-        # 头像保存（如果有的话)
-        if self.file is not None:
-            image_format = self.file.split('.')[1]
-            path = IMG_PATH + volunteer.name + image_format
-            with open(path, 'wb') as f:
-                for line in self.file.chunks():
-                    f.write(line)
-            volunteer.image = path
-        else:
-            volunteer.image = ''
-
         volunteer.save()
 
     def login(self):
@@ -79,10 +68,29 @@ class Volunteer:
         if volunteer.password != self.form['password']:
             raise PasswordErrorExpection()
 
-        return volunteer
-
     def home(self):
-        return models.Volunteer.objects.get(phone_number=self.form['phone_number'])
+        """
+        获得个人信息，包括文字信息和图片信息
+        :return:
+            message(only 1 element list),
+            image(encode with utf-8)
+        """
+        volunteer = models.Volunteer.objects.filter(phone_number=self.form['phone_number'])
+        message = serializers.serialize('json', volunteer)
+
+        f = open(volunteer[0].image, 'rb')
+        image = base64.b64encode(f.read())
+        image = image.decode('utf-8')
+        f.close()
+
+        return message, image
+
+    def update(self):
+        """
+        更新个人信息（不包括图片）
+        :return:
+        """
+        models.Volunteer.objects.filter(phone_number=self.form['phone_number']).update(self.form)
 
 
 class Student:
@@ -95,7 +103,8 @@ class Student:
         """
         注册对象
         :return:
-        :exception:UserExistedException
+        :exception:
+            UserExistedException
         """
 
         # 查重
@@ -112,27 +121,16 @@ class Student:
             wechat=self.form['wechat'],
         )
 
-        # 头像保存（如果有的话)
-        if self.file is not None:
-            image_format = self.file.split('.')[1]
-            path = IMG_PATH + student.name + image_format
-            with open(path, 'wb') as f:
-                for line in self.file.chunks():
-                    f.write(line)
-            student.image = path
-        else:
-            student.image = ''
-
         student.save()
 
     def login(self):
         """
-                用户登陆
-                :return:
-                :exception:
-                    UserNotFountExpection,
-                    PasswordErrorExpection,
-                """
+        用户登陆
+        :return:
+        :exception:
+            UserNotFountExpection,
+            PasswordErrorExpection,
+        """
         # 检查用户是否存在
         if models.Student.objects.filter(phone_number=self.form['phone_number']).count() == 0:
             raise UserNotFountExpection()
@@ -142,7 +140,26 @@ class Student:
         if student.password != self.form['password']:
             raise PasswordErrorExpection()
 
-        return student
-
     def home(self):
-        return models.Student.objects.get(phone_number=self.form['phone_number'])
+        """
+        获得个人信息，包括文字信息和图片信息
+        :return:
+            message(only 1 element list),
+            image(encode with utf-8)
+        """
+        student = models.Student.objects.filter(phone_number=self.form['phone_number'])
+        message = serializers.serialize('json', student)
+
+        f = open(student[0].image, 'rb')
+        image = base64.b64encode(f.read())
+        image = image.decode('utf-8')
+        f.close()
+
+        return message, image
+
+    def update(self):
+        """
+        更新个人信息（不包括图片）
+        :return:
+        """
+        models.Student.objects.filter(phone_number=self.form['phone_number']).update(self.form)

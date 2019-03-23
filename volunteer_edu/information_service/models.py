@@ -17,6 +17,7 @@ class Volunteer(models.Model):
     identify = models.CharField(max_length=4)  # 目前身份（大学几年级）
     address = models.CharField(max_length=32)  # 地址
     image = models.FilePathField()  # 头像
+    certification = models.FilePathField()  # 学生证照片
     title = models.CharField(max_length=100)  # 荣誉称号
 
     subjects = models.ManyToManyField('Subject')  # 教授科目
