@@ -24,7 +24,7 @@ SECRET_KEY = 'l6qmnm)4)41#g-h)gkx(728batn5(l@s5^3hol675o&-k+y0v&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['47.105.150.105', '127.0.0.1']
 # ALLOWED_HOSTS = []
 
 # Application definition
@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'information_service',
+    'reservation_service',
+    'recommend_service',
+    'django_apscheduler',
 ]
 
 MIDDLEWARE = [
@@ -77,8 +80,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'volunteer_edu',
-        'USER': '',
-        'PASSWORD': '',
+        'USER': 'root',
+        'PASSWORD': 'qwe123',
         'HOST': '127.0.0.1',
         'POST': '3306',
     }
@@ -105,20 +108,27 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-Hans'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
+
+# 这里放用户上传的图片
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+# 这里放admin的样式
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
 ]
+

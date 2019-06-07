@@ -15,15 +15,9 @@ Including another URLconf
 """
 from django.urls import path
 
-from reservation_service import views
+from recommend_service import views
 
 urlpatterns = [
-    path('create/', views.create),
-    path('confirm/', views.confirm),
-    path('finish/', views.finish),
-    path('message/', views.message),
-    path('message/detail/', views.message_detail),
-    path('reservation/', views.reservation),
-    path('comment/', views.comment),
+    path('volunteer/', views.recommend_volunteer)
 
 ]
