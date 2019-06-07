@@ -19,6 +19,16 @@ class VolunteerAdmin(admin.ModelAdmin):
                     'identify',
                     'address',
                     )
+    list_per_page = 15
+    list_filter = (
+        'is_vaild',
+        'gender',
+    )
+    search_fields = (
+        'phone_number',
+        'name',
+    )
+    filter_horizontal = ('subjects', 'areas')
 
 
 class StudentAdmin(admin.ModelAdmin):
@@ -30,19 +40,36 @@ class StudentAdmin(admin.ModelAdmin):
                     'address',
                     'wechat',
                     )
+    list_per_page = 15
+    search_fields = (
+        'phone_number',
+        'name',
+    )
 
 
 class SubjectAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
+    list_display = ('id', 'name', 'grade', 'type')
+    list_per_page = 15
 
 
 class AreaAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
+    list_per_page = 15
+
+
+class VolunteerFeedbackAdmin(admin.ModelAdmin):
+    list_display = ('id', 'volunteer', 'text')
+    list_per_page = 15
+
+
+class StudentFeedbackAdmin(admin.ModelAdmin):
+    list_display = ('id', 'student', 'text')
+    list_per_page = 15
 
 
 admin.site.register(Volunteer, VolunteerAdmin)
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Subject, SubjectAdmin)
-admin.site.register(History)
-admin.site.register(Comment)
 admin.site.register(Area, AreaAdmin)
+admin.site.register(VolunteerFeedback, VolunteerFeedbackAdmin)
+admin.site.register(StudentFeedback, StudentFeedbackAdmin)
