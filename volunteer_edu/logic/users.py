@@ -2,8 +2,9 @@ from django.core import serializers
 
 from information_service import models
 from logic.expections import *
+from logic.GLOBALVAR import *
 
-import base64
+import os
 
 
 class Volunteer:
@@ -36,6 +37,7 @@ class Volunteer:
             identify=self.form['identify'],
             address=self.form['address'],
             title=self.form['title'],
+            description=self.form['description'],
         )
 
         # 将外键关系加入用户信息
@@ -45,6 +47,22 @@ class Volunteer:
         for each in self.form['areas']:
             area = models.Area.objects.get(name=each)
             volunteer.areas.add(area)
+
+        # 存储image
+        image_list = os.listdir(IMG_PATH + 'Volunteer/')
+        for image in image_list:
+            if image.startswith(self.form['phone_number']):
+                image_path = WEBSITE_ADDRESS + IMG_PATH + 'Volunteer/' + image
+                volunteer.image = image_path
+                break
+
+        # 存储certification
+        certification_list = os.listdir(CERTIFICATION_PATH)
+        for certification in certification_list:
+            if certification.startswith(self.form['phone_number']):
+                certification_path = WEBSITE_ADDRESS + CERTIFICATION_PATH + certification
+                volunteer.certification = certification_path
+                break
 
         volunteer.save()
 
@@ -76,21 +94,45 @@ class Volunteer:
             image(encode with utf-8)
         """
         volunteer = models.Volunteer.objects.filter(phone_number=self.form['phone_number'])
-        message = serializers.serialize('json', volunteer)
-
-        f = open(volunteer[0].image, 'rb')
-        image = base64.b64encode(f.read())
-        image = image.decode('utf-8')
-        f.close()
-
-        return message, image
+        volunteer = serializers.serialize('json', volunteer, use_natural_foreign_keys=True)
+        return volunteer
 
     def update(self):
         """
-        更新个人信息（不包括图片）
+        更新个人信息
         :return:
+        :exception:UserNotFountExpection
         """
-        models.Volunteer.objects.filter(phone_number=self.form['phone_number']).update(self.form)
+
+        if models.Volunteer.objects.filter(phone_number=self.form['phone_number']).count() == 0:
+            raise UserNotFountExpection
+
+        if self.form.get('role', None) is not None:
+            del self.form['role']
+
+        # 更新地区（如果有的话）
+        areas = self.form.get('areas', None)
+        if areas is not None:
+            volunteer = models.Volunteer.objects.get(phone_number=self.form['phone_number'])
+            volunteer.areas.clear()
+            for each in areas:
+                area = models.Area.objects.get(name=each)
+                volunteer.areas.add(area)
+            volunteer.save()
+            del self.form['areas']
+
+        # 更新学科（如果有的话）
+        subjects = self.form.get('subjects', None)
+        if subjects is not None:
+            volunteer = models.Volunteer.objects.get(phone_number=self.form['phone_number'])
+            volunteer.subjects.clear()
+            for each in subjects:
+                subject = models.Subject.objects.get(name=each)
+                volunteer.subjects.add(subject)
+            volunteer.save()
+            del self.form['subjects']
+
+        models.Volunteer.objects.filter(phone_number=self.form['phone_number']).update(**self.form)
 
 
 class Student:
@@ -121,6 +163,13 @@ class Student:
             wechat=self.form['wechat'],
         )
 
+        image_list = os.listdir(IMG_PATH + 'Student/')
+        for image in image_list:
+            if image.startswith(self.form['phone_number']):
+                image_path = WEBSITE_ADDRESS + IMG_PATH + 'Student/' + image
+                student.image = image_path
+                break
+
         student.save()
 
     def login(self):
@@ -142,24 +191,21 @@ class Student:
 
     def home(self):
         """
-        获得个人信息，包括文字信息和图片信息
+        获得个人信息
         :return:
             message(only 1 element list),
             image(encode with utf-8)
         """
         student = models.Student.objects.filter(phone_number=self.form['phone_number'])
-        message = serializers.serialize('json', student)
+        student = serializers.serialize('json', student, use_natural_foreign_keys=True)
 
-        f = open(student[0].image, 'rb')
-        image = base64.b64encode(f.read())
-        image = image.decode('utf-8')
-        f.close()
-
-        return message, image
+        return student
 
     def update(self):
         """
         更新个人信息（不包括图片）
         :return:
         """
-        models.Student.objects.filter(phone_number=self.form['phone_number']).update(self.form)
+        if self.form.get('role', None) is not None:
+            del self.form['role']
+        models.Student.objects.filter(phone_number=self.form['phone_number']).update(**self.form)
